@@ -5,4 +5,3 @@ const stackoverflow = require("./src/sites/stackoverflow");
 // console.log(testing);
 
 const testing = stackoverflow();
-console.log("hello world");

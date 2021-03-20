@@ -4,8 +4,8 @@ const crawler = require("../core/crawler");
 module.exports = function () {
   (async () => {
     try {
-      const crawl = await crawler.get("https://stackoverflow.com/jobs");
-      await crawler.screenshot();
+      await crawler.get("https://stackoverflow.com/jobs");
+      await crawler.getJobs();
     } catch (e) {
       console.log(e);
     }
