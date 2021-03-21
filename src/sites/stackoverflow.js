@@ -1,4 +1,3 @@
-// const puppeteer = require("puppeteer");
 const crawler = require("../core/crawler");
 
 module.exports = function () {

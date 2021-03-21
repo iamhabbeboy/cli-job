@@ -1,4 +1,6 @@
 const puppeteer = require("puppeteer");
+const chalk = require("chalk");
+const log = console.log;
 
 module.exports = {
   page: undefined,
@@ -8,38 +10,52 @@ module.exports = {
     try {
       this.browser = await puppeteer.launch();
       const page = await this.browser.newPage();
+      log(chalk.green("Loading data from page"));
       await page.goto(url);
       this.page = page;
     } catch (e) {
-      console.error("Unable to crawl site, please try again later: ", e);
+      log.error("Unable to crawl site, please try again later: ", e);
     }
   },
 
   async getJobs() {
     await this.page.waitForSelector(".previewable-results");
-    let jobTitle = await this.page.evaluate(() => {
-      return Array.from(
-        document.querySelectorAll(".stretched-link")
-      ).map(list => list.innerText.trim());
+    const url = await this.page.$$eval(".listResults > div", jobs => {
+      const result = [];
+      jobs.map(job => {
+        let title = job.querySelector("h2.fs-body3 > a");
+        let tags = Array.from(
+          job.querySelectorAll(".ps-relative > a")
+        ).map(tag => tag.textContent.trim());
+
+        let company = Array.from(
+          job.querySelectorAll(".fc-black-700 > span")
+        ).map(company => company.textContent.trim());
+
+        let datePosted = Array.from(
+          job.querySelectorAll(".horizontal-list > li")
+        ).map(date => date.textContent.trim());
+
+        if (title) {
+          result.push({
+            title: title.textContent,
+            url: title.href,
+            company: company,
+            tag: tags,
+            date: datePosted,
+          });
+        }
+      });
+
+      return result;
     });
 
-    let company = await this.page.evaluate(() => {
-      return Array.from(document.querySelectorAll(".fc-black-700")).map(list =>
-        list.innerText.trim()
-      );
-    });
+    log(chalk.greenBright(JSON.stringify(url[0])));
 
-    let filters = await this.page.evaluate(() => {
-      return Array.from(document.querySelectorAll(".fw-wrap"))
-        .splice(1)
-        .map(list => list.innerText.trim());
-    });
-
-    let filters = await this.page.evaluate(() => {
-      return Array.from(
-        document.querySelectorAll(".horizontal-list")
-      ).map(list => list.innerText.trim());
-    });
+    // log(jobTitle);
+    // log(chalk.red(company.length));
+    // log(chalk.cyan(filters.length));
+    // log(chalk.yellow(jobType.length));
 
     await this.browser.close();
   },
