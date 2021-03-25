@@ -8,4 +8,4 @@ Cli tool that crawl job sites(stackover, sitepoint) for available openings.
 ## Usage
 `npm link` or `yarn link`
 
-Run `> cli-jobs` to fetch jobs
+Run `cli-jobs` to fetch jobs
