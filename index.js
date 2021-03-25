@@ -1,3 +1,4 @@
 #!/usr/bin/env node
-const stackoverflow = require("./src/sites/stackoverflow");
-stackoverflow();
+const getJobListing = require("./src/format");
+
+(async () => await getJobListing())();
